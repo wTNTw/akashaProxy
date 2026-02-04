@@ -3,76 +3,78 @@
 English | [中文](./readme_zh.md)
 
 
-### Instructions for use
+### Usage Notes
 
-1. Possess independent judgment/analysis ability.
-2. Know how to use Google search.
-3. Ability to read official documents.
-4. Have basic knowledge of Linux.
-5. Willing to tinker.
+1. Be able to make independent judgments and analyses.
+2. Know how to use search engines.
+3. Be able to read official documentation.
+4. Have basic Linux knowledge.
+5. Enjoy tinkering.
+6. akashaProxy is a non-commercial tool that runs on Magisk, providing only Mihomo configuration management and runtime control features.
+7. This software is released under the GNU General Public License v3.0 (GPL-3.0).
+8. You must follow local laws and regulations when using akashaProxy; the developers and contributors are not responsible for any consequences arising from its use.
+9. akashaProxy does not guarantee the legality, authenticity, accuracy, or validity of information obtained through the module (including third-party content); developers and contributors assume no responsibility for how you use it.
 
->Otherwise, we do not recommend using this module
+> Otherwise, we do not recommend that you use this module.
 
-akashaProxy is a Magisk/KernelSU module derived from ~~mihomo~~clashMeta
+akashaProxy is a Magisk/KernelSU module for Mihomo.
 
-The name is modified from the void terminal of [clashMeta document](https://wiki.metacubex.one)
-
-~~The Chinese name should be called `Void Agent`~~
+The name is adapted from the Void Terminal described in the [Mihomo documentation](https://wiki.metacubex.one).
 
 ---
 
-**99% of the problems with this module basically come from clash configuration errors or plug-in configuration errors**
+**99% of issues with this module originate from incorrect Mihomo configurations or plugin configurations.**
 
-**Please make good use of search engines and logs**
+**Please make good use of search engines and logs.**
 
-## Configuration:
+## Configuration
 
-**Working path:/data/adb/modules/akashaProxy/config/**
+**Working directory: /data/adb/modules/akashaProxy/config/**
 
-`clash.config` : module startup configuration
+`clash.config`: Module startup configuration.
 
-`config.yaml.`:clash configuration file
+`config.yaml`: Mihomo configuration file.
 
-`packages.list` : Black/white list for proxying
+`packages.list`: Allowlist/denylist for traffic routed through the proxy.
 
-yacd management panel: 127.0.0.1:9090/ui (default)
+yacd dashboard: 127.0.0.1:9090/ui (default)
 
->Rename config.yaml.example to config.yaml and fill in the configuration file, or use your own configuration file
+> Rename config.yaml.example to config.yaml and fill in the configuration, or use your own configuration file.
 
-clash tutorial:
+Clash tutorials:
 https://wiki.metacubex.one
 https://clash-meta.wiki
 
-## Start and stop
+## Start and Stop
 
-start:
+Start:
 ````
 /data/adb/modules/akashaProxy/config/scripts/clash.service -s && /data/adb/modules/akashaProxy/config/scripts/clash.iptables -s
 ````
 
-stop:
+Stop:
 ````
 /data/adb/modules/akashaProxy/config/scripts/clash.service -k && /data/adb/modules/akashaProxy/config/scripts/clash.iptables -k
 ````
 
-You can also use [dashboard](https://t.me/MagiskChangeKing) to manage startup and shutdown or KernelSU webUI control
+You can also manage start and stop with the scripts under /data/adb/modules/akashaProxy/config/tools or via the KernelSU web UI.
 
-## module
+## Module
 
-[mdoule wiki](./docs/module.md)
+See [docs/module.md](docs/module.md) for the module documentation.
 
-## Compile
+## Build
 
-Execute `make` to compile and package the module
+Run `make` to build and package the module:
 ````
 make
 ````
-> The armeabi-v7a architecture and arm64-v8a architecture are built by default under the android platform
+> By default, the Android armeabi-v7a and arm64-v8a architectures are built.
 
-## Publish
+## Release
 
 [Telegram](https://t.me/akashaProxyci)
 
-[Github action(requires decompression)](https://github.com/akashaProxy/akashaProxy/actions)
+[GitHub Actions (requires extraction)](https://github.com/akashaProxy/akashaProxy/actions)
 
-[Github releases](https://github.com/akashaProxy/akashaProxy/releases)
+[GitHub releases](https://github.com/akashaProxy/akashaProxy/releases)
