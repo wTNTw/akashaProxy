@@ -16,7 +16,8 @@ fi
 crond -c ${MODDIR}/config/run
 
 if [ "${compatible_dashboard}" = "true" ] ; then
-    ln -s /data/adb/modules/akashaProxy/config /data/clash
+    rm -rf /data/clash
+    ln -s ${MODDIR}/config /data/clash
 fi
 
 if [ "${self_start}" = "true" ] ; then

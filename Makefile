@@ -1,9 +1,9 @@
 NAME=akashaProxy
 CC ?= clang
-.PHONY: all pack download-dashboard download-mihomo build-webui clean check-deps build-tools default download
+.PHONY: all pack download-dashboard download-mihomo build-webui clean check-deps build-tools default download build-ruleconverter download-geodata
 all: default
 
-default: check-deps clean download pack
+default: check-deps clean pack
 
 check-deps:
 	@command -v curl >/dev/null 2>&1 || { echo >&2 "[ERROR] curl is not installed. Please install curl."; exit 1; }
@@ -13,58 +13,59 @@ check-deps:
 	@command -v upx >/dev/null 2>&1 || { echo >&2 "[ERROR] upx is not installed. Please install upx."; exit 1; }
 
 download: download-mihomo download-dashboard download-geodata
+build: build-tools build-webui build-ruleconverter
 
-pack: build-tools build-webui build-ruleconverter
-	echo "id=akashaProxy\nname=akashaProxy\nversion="$(shell git rev-parse --short HEAD)"\nversionCode="$(shell git log -1 --format=%ct)"\nauthor=akashaProxy developer\ndescription=akasha terminal transparent proxy module that supports tproxy and tun and adds many easy-to-use features. Compatible with Magisk/KernelSU">module/module.prop
-	cd module && zip -r ../$(NAME).zip *
+init:
+	mkdir tmp
+	cp -r module/* tmp/
+
+pack: init download build
+	echo "id=akashaProxy\nname=akashaProxy\nversion="$(shell git rev-parse --short HEAD)"\nversionCode="$(shell git log -1 --format=%ct)"\nauthor=akashaProxy developer\ndescription=akasha terminal transparent proxy module that supports tproxy and tun and adds many easy-to-use features. Compatible with Magisk/KernelSU">tmp/module.prop
+	cd tmp && zip -r ../$(NAME).zip *
 	@echo "module pack successfully"
+	rm -rf tmp
 
 download-geodata:
-	curl --connect-timeout 5 --progress-bar -L -o module/src/GeoSite.dat \
+	curl --connect-timeout 5 --progress-bar -L -o tmp/config/GeoSite.dat \
 	"https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
-	curl --connect-timeout 5 --progress-bar -L -o module/src/GeoIP.dat \
+	curl --connect-timeout 5 --progress-bar -L -o tmp/config/GeoIP.dat \
 	"https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat"
 
 download-mihomo:
-	@[ ! -f module/bin ] && mkdir -p module/bin
+	@[ ! -f tmp/config/bin ] && mkdir -p tmp/bin
 	remote_mihomo_ver=$$(curl --connect-timeout 5 -L "https://github.com/MetaCubeX/mihomo/releases/latest/download/version.txt") && \
-	curl --connect-timeout 5 --progress-bar -L -o module/bin/mihomo-android-arm64-v8.gz \
+	curl --connect-timeout 5 --progress-bar -L -o tmp/bin/mihomo-android-arm64-v8.gz \
 	"https://github.com/MetaCubeX/mihomo/releases/latest/download/mihomo-android-arm64-v8-$${remote_mihomo_ver}.gz"
 	@echo "mihomo download successfully"
 
 download-dashboard:
-	@[ ! -f module/src/bin ] && mkdir -p module/src/zashboard
-	curl --connect-timeout 5 --progress-bar -L -o module/src/zashboard/dist-no-fonts.zip \
+	@[ ! -f tmp/config/bin ] && mkdir -p tmp/config/zashboard
+	curl --connect-timeout 5 --progress-bar -L -o tmp/config/zashboard/dist-no-fonts.zip \
 	"https://github.com/Zephyruso/zashboard/releases/latest/download/dist-no-fonts.zip"
-	unzip -o module/src/zashboard/dist-no-fonts.zip -d module/src/zashboard/
-	mv -f module/src/zashboard/dist/* module/src/zashboard/
-	rm -rf module/src/zashboard/dist
-	rm -rf module/src/zashboard/dist-no-fonts.zip
+	unzip -o tmp/config/zashboard/dist-no-fonts.zip -d tmp/config/zashboard/
+	mv -f tmp/config/zashboard/dist/* tmp/config/zashboard/
+	rm -rf tmp/config/zashboard/dist
+	rm -rf tmp/config/zashboard/dist-no-fonts.zip
 	@echo "dashboard download successfully"
 
 build-webui:
 	cd webui && pnpm i
 	cd webui && pnpm build
-	mv -f ./webui/out ./module/webroot
+	mv -f ./webui/out ./tmp/webroot
 	@echo "webui build successfully"
 
 build-tools:
 	cd yamlcli && go mod tidy
-	cd yamlcli && CGO_ENABLED=0 GOOS=android GOARCH=arm64 go build -trimpath -ldflags="-s -w" -buildvcs=false -o ../module/src/bin/yamlcli
-	upx module/src/bin/yamlcli
+	cd yamlcli && CGO_ENABLED=0 GOOS=android GOARCH=arm64 go build -trimpath -ldflags="-s -w" -buildvcs=false -o ../tmp/config/bin/yamlcli
+	upx tmp/config/bin/yamlcli
 	@echo "yamlcli build successfully"
 
 build-ruleconverter:
 	cd plugins/ruleconverter && go mod tidy
-	cd plugins/ruleconverter && CGO_ENABLED=0 GOOS=android GOARCH=arm64 go build -trimpath -ldflags="-s -w" -buildvcs=false -o ../../module/src/plugins/ruleconverter/bin/ruleconverter
-	upx module/src/plugins/ruleconverter/bin/ruleconverter
+	cd plugins/ruleconverter && CGO_ENABLED=0 GOOS=android GOARCH=arm64 go build -trimpath -ldflags="-s -w" -buildvcs=false -o ../../tmp/config/plugins/ruleconverter/bin/ruleconverter
+	upx tmp/config/plugins/ruleconverter/bin/ruleconverter
 	@echo "ruleconverter build successfully"
 
 clean:
-	rm -rf ./module/module.prop
+	rm -rf tmp
 	rm -rf $(NAME).zip
-	rm -rf ./module/webroot
-	rm -rf ./module/src/zashboard
-	rm -rf ./module/bin/*
-	rm -rf ./module/src/bin/yamlcli
-	rm -rf ./module/src/plugins/ruleconverter/bin/ruleconverter

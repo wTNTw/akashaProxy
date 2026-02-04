@@ -1,11 +1,3 @@
 akashaProxy*.zip
-module/module.prop
-module/bin/*
-module/src/zashboard
-module/webroot
-module/src/GeoIP.dat
-module/src/GeoSite.dat
 node_modules
-module/src/bin/yamlcli
-module/.update
-module/src/plugins/ruleconverter/bin/ruleconverter
+tmp
