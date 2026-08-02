@@ -1,6 +1,6 @@
 ## 模块系统
 
-akashaProxy 提供了一个模块系统，允许用户通过脚本扩展功能。模块位于运行目录下的 `plugins` 文件夹中（通常为 `/data/adb/modules/akashaProxy/config/plugins/`）
+akashaProxy 提供了一个模块系统，允许用户通过脚本扩展功能。模块位于运行目录下的 `plugins` 文件夹中（通常为 `/data/adb/akashaProxy/plugins/`）
 
 ### 目录结构
 

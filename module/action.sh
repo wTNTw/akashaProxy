@@ -1,1 +1,1 @@
-/data/adb/modules/akashaProxy/config/tools/action.sh
+/data/adb/akashaProxy/tools/action.sh

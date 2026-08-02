@@ -1,0 +1,1 @@
+/data/adb/akashaProxy/scripts/clash.tool -u

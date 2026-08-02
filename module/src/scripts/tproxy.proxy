@@ -1,4 +1,4 @@
-[ -z "$version" ] && . /data/adb/modules/akashaProxy/config/clash.config
+[ -z "$version" ] && . /data/adb/akashaProxy/clash.config
 
 set_tproxy() {
     if [ "$(sysctl -n net.ipv4.ip_forward)" -ne 1 ]; then

@@ -1,3 +1,6 @@
 [submodule "plugins/ruleconverter"]
 	path = plugins/ruleconverter
 	url = https://github.com/elysias123/ruleconverter
+[submodule "yamlcli"]
+	path = yamlcli
+	url = https://github.com/akashaProxy/yamlcli

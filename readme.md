@@ -29,7 +29,7 @@ The name is adapted from the Void Terminal described in the [Mihomo documentatio
 
 ## Configuration
 
-**Working directory: /data/adb/modules/akashaProxy/config/**
+**Working path:/data/adb/akashaProxy/**
 
 `clash.config`: Module startup configuration.
 
@@ -49,12 +49,12 @@ https://clash-meta.wiki
 
 Start:
 ````
-/data/adb/modules/akashaProxy/config/scripts/clash.service -s && /data/adb/modules/akashaProxy/config/scripts/clash.iptables -s
+/data/adb/akashaProxy/scripts/clash.service -s && /data/adb/akashaProxy/scripts/clash.iptables -s
 ````
 
 Stop:
 ````
-/data/adb/modules/akashaProxy/config/scripts/clash.service -k && /data/adb/modules/akashaProxy/config/scripts/clash.iptables -k
+/data/adb/akashaProxy/scripts/clash.service -k && /data/adb/akashaProxy/scripts/clash.iptables -k
 ````
 
 You can also manage start and stop with the scripts under /data/adb/modules/akashaProxy/config/tools or via the KernelSU web UI.

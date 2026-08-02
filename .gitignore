@@ -1,3 +1,4 @@
 akashaProxy*.zip
-node_modules
 tmp
+node_modules
+.vscode

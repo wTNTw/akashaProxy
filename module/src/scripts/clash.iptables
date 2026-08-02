@@ -1,4 +1,4 @@
-[ -z "$version" ] && . /data/adb/modules/akashaProxy/config/clash.config
+[ -z "$version" ] && . /data/adb/akashaProxy/clash.config
 
 start_iptables() {
     if [ "${mode}" = "socks" ] && [ "${tun_status}" = "true" ];then

@@ -1,7 +1,7 @@
 
 ## Module System
 
-akashaProxy provides a module system that allows users to extend functionality through scripts. Modules are located in the `plugins` folder under the runtime directory (typically `/data/adb/modules/akashaProxy/config/plugins/`)
+akashaProxy provides a module system that allows users to extend functionality through scripts. Modules are located in the `plugins` folder under the runtime directory (typically `/data/adb/akashaProxy/plugins/`)
 
 ### Directory Structure
 

@@ -1,86 +1,85 @@
 SKIPUNZIP=1
 
+[ -d "/data/adb/modules/Clash_For_Magisk" ] && rm -rf /data/adb/modules/Clash_For_Magisk
 system_gid="1000"
 system_uid="1000"
-module_dir="/data/adb/modules/akashaProxy"
-data_dir="${module_dir}/config"
+data_dir="/data/adb/akashaProxy"
 
 [ -d "${data_dir}" ] || mkdir -p "${data_dir}"
 [ -d "${data_dir}/run" ] || mkdir -p "${data_dir}/run"
 [ -d "${data_dir}/kernel" ] || mkdir -p "${data_dir}/kernel"
-
-# 历史遗留问题
 [ -d "${data_dir}/clashkernel" ] && rm -rf "${data_dir}/clashkernel"
 [ -d "${data_dir}/module" ] && rm -rf "${data_dir}/module"
 
-ui_print  "- 正在解压文件..."
-unzip -o "${ZIPFILE}" 'bin/*' -d ${TMPDIR} >&2
+unzip -o "${ZIPFILE}" 'bin/*' -d "${TMPDIR}"
+unzip -o "${ZIPFILE}" 'src/*' -d "${TMPDIR}"
 
-unzip -o "${ZIPFILE}" -x 'bin/*' -d ${MODPATH} >&2
+unzip -o "${ZIPFILE}" -x 'META-INF/*' -d "${MODPATH}"
 
-case $(getprop ro.product.cpu.abi) in
-    "arm64-v8a")
-        ABI="arm64-v8"
-        ;;
-    "armeabi-v7a")
-        ABI="armv7"
-        ;;
-    "x86")
-        ABI="386"
-        ;;
-    "x86_64")
-        ABI="amd64"
-        ;;
-    ?)
-        ABI="arm64-v8"
-        ui_print "- 未知的架构: $(getprop ro.product.cpu.abi) 使用默认架构: arm64-v8"
-        ;;
-esac
 
-if [ ! -f "${data_dir}/kernel/mihomo" ]; then
-    if [ -f "${TMPDIR}/bin/mihomo-android-${ABI}.gz" ]; then
-        ui_print "- 正在解压 mihomo 内核..."
-        gunzip -f ${TMPDIR}/bin/mihomo-android-${ABI}.gz
-        mv -f "${TMPDIR}/bin/mihomo-android-${ABI}" "${data_dir}/kernel/mihomo"
-    else
-        abort "- 在模块中未找到架构: ${ABI} 请自行下载对应架构的mihomo → https://github.com/MetaCubeX/mihomo/releases"
+if [ -f "${data_dir}/kernel/mihomo" ]; then
+    ui_print "- 模块已安装,跳过内核安装"
+else
+    case $(getprop ro.product.cpu.abi) in
+        "arm64-v8a")
+            ABI="arm64-v8"
+            ;;
+        "armeabi-v7a")
+            ABI="armv7"
+            ;;
+        "x86")
+            ABI="386"
+            ;;
+        "x86_64")
+            ABI="amd64"
+            ;;
+        *)
+            ABI="arm64-v8"
+            ui_print "- 未知的架构: $(getprop ro.product.cpu.abi) 使用默认架构: arm64-v8"
+            ;;
+    esac
+
+    if [ ! -f "${data_dir}/kernel/mihomo" ]; then
+        if [ -f "${TMPDIR}/bin/mihomo-android-${ABI}.gz" ]; then
+            ui_print "- 正在解压 mihomo 内核..."
+            gzip -d "${TMPDIR}/bin/mihomo-android-${ABI}.gz"
+            mv -f "${TMPDIR}/bin/mihomo-android-${ABI}" "${data_dir}/kernel/mihomo"
+        else
+            abort "- 在模块中未找到架构: ${ABI} 请自行下载对应架构的mihomo → https://github.com/MetaCubeX/mihomo/releases"
+        fi
     fi
 fi
 
 
 if [ -f "${data_dir}/config.yaml" ]; then
     ui_print "- config.yaml 文件已存在 跳过覆盖."
-    rm -rf "${MODPATH}/config/config.example.yaml"
+    rm -rf "${TMPDIR}/src/config.example.yaml"
 else
-    mv -f "${MODPATH}/config/config.example.yaml" "${MODPATH}/config/config.yaml"
+    mv -f "${TMPDIR}/src/config.example.yaml" "${TMPDIR}/src/config.yaml"
 fi
 
 if [ -f "${data_dir}/packages.list" ]; then
-    ui_print "- packages.list 文件已存在 跳过覆盖."
-    rm -rf "${MODPATH}/config/packages.list"
+        ui_print "- packages.list 文件已存在 跳过覆盖."
+        rm -rf "${TMPDIR}/src/packages.list"
 fi
 
 if [ -f "${data_dir}/clash.config" ]; then
     mode=$(grep -i "^mode" "${data_dir}/clash.config" | awk -F '=' '{print $2}' | sed "s/\"//g")
 
     oldVersion=$(grep -i "version" "${data_dir}/clash.config" | awk -F '=' '{print $2}' | sed "s/\"//g")
-    newVersion=$(grep -i "version" "${MODPATH}/config/clash.config" | awk -F '=' '{print $2}' | sed "s/\"//g")
+    newVersion=$(grep -i "version" "${TMPDIR}/src/clash.config" | awk -F '=' '{print $2}' | sed "s/\"//g")
 
     if [ "${oldVersion}" -ge "${newVersion}" ] && [ ! "${oldVersion}" = "" ]; then
         ui_print "- clash.config 文件已存在 跳过覆盖."
-        rm -rf "${MODPATH}/config/clash.config"
+        rm -rf "${TMPDIR}/src/clash.config"
     else
-        sed -i "s/global/${mode}/g" "${MODPATH}/config/clash.config"
+        sed -i "s/global/${mode}/g" "${TMPDIR}/src/clash.config"
         cp -Rf "${data_dir}/clash.config" "${data_dir}/clash.config.old"
     fi
 fi
 
 
-cp -Rf "${MODPATH}/webroot" "${module_dir}/webroot" #立即刷新webui
-
-cp -Rf "${MODPATH}/config" "${module_dir}"
-cp -Rf "${data_dir}" "${MODPATH}"
-
+cp -Rf "${TMPDIR}"/src/* "${data_dir}/"
 
 ui_print "- 开始设置权限."
 set_perm_recursive "${MODPATH}" 0 0 0770 0770

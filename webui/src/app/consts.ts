@@ -1,1 +1,1 @@
-export const MIHOMO_PATH = '/data/adb/modules/akashaProxy/config'
+export const MIHOMO_PATH = '/data/adb/akashaProxy'

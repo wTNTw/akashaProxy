@@ -1,4 +1,4 @@
-[ -z "$version" ] && . /data/adb/modules/akashaProxy/config/clash.config
+[ -z "$version" ] && . /data/adb/akashaProxy/clash.config
 
 set_tun(){
     ip -4 rule add fwmark ${mark_id} table ${table_id} pref ${pref_id}

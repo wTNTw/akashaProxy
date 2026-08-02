@@ -1,4 +1,5 @@
 MODDIR=${0%/*}
+data_dir="/data/adb/akashaProxy"
 
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 2
@@ -8,18 +9,17 @@ until [ -d "/sdcard/Android" ]; do
     sleep 2
 done
 
-. ${MODDIR}/config/clash.config
+. ${data_dir}/clash.config
 
-if [ ! -d ${MODDIR}/config/run ]; then
-    mkdir -p ${MODDIR}/config/run
+if [ ! -d ${data_dir}/run ]; then
+    mkdir -p ${data_dir}/run
 fi
-crond -c ${MODDIR}/config/run
+crond -c ${data_dir}/run
 
 if [ "${compatible_dashboard}" = "true" ] ; then
-    rm -rf /data/clash
-    ln -s ${MODDIR}/config /data/clash
+    [ -L /data/clash ] || ln -s /data/adb/akashaProxy /data/clash
 fi
 
 if [ "${self_start}" = "true" ] ; then
-    nohup ${MODDIR}/config/scripts/clash.service -s && ${MODDIR}/config/scripts/clash.iptables -s & > ${MODDIR}/config/run/run.logs 2>&1 &
+    nohup ${data_dir}/scripts/clash.service -s && ${data_dir}/scripts/clash.iptables -s & > ${data_dir}/run/run.logs 2>&1 &
 fi
